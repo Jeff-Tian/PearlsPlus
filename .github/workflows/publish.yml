@@ -25,10 +25,11 @@ jobs:
       - name: build
         env:
           CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
-        run: emcc chapter1/1.6.1.cpp -o index.html
+        run: emcc main.cpp -o index.html
 
       - name: Publish generated content to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
+          cname: pearlsplus.pa-ca.me

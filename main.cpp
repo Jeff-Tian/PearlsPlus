@@ -1,8 +1,5 @@
-// #include <iostream>
-// #include "./chapter1/1.6.1.cpp"
+#include <iostream>
 
-// int main2() {
-//   std::cout << "Hello World!\n";
-
-//   main_1_6_1();
-// } 
+int main() {
+  std::cout << "Hello World!\n";
+} 
