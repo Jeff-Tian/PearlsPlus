@@ -28,8 +28,7 @@ jobs:
         run: emcc chapter1/1.6.1.cpp
 
       - name: Publish generated content to GitHub Pages
-        uses: tsunematsu21/actions-publish-gh-pages@v1.0.2
+        uses: JamesIves/github-pages-deploy-action@4.1.7
         with:
-          dir: .
-          branch: gh-pages
-          token: ${{ secrets.ACCESS_TOKEN }}
+          branch: gh-pages # The branch the action should deploy to.
+          folder: ./ # The folder the action should deploy.
