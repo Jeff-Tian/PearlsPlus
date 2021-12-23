@@ -1,0 +1,35 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            **/cpm_modules
+            **/node_modules
+          key: cpm-node-modules-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake', '**/yarn.lock') }}
+
+      - uses: mymindstorm/setup-emsdk@v10
+        with:
+          version: 2.0.31
+
+      - name: build
+        env:
+          CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
+        run: emcc chapter1/1.6.1.cpp
+
+      - name: Publish generated content to GitHub Pages
+        uses: tsunematsu21/actions-publish-gh-pages@v1.0.2
+        with:
+          dir: .
+          branch: gh-pages
+          token: ${{ secrets.ACCESS_TOKEN }}
