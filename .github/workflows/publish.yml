@@ -25,7 +25,7 @@ jobs:
       - name: build
         env:
           CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
-        run: emcc chapter1/1.6.1.cpp
+        run: emcc chapter1/1.6.1.cpp -o index.html
 
       - name: Publish generated content to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.1.7
