@@ -1,0 +1,1 @@
+docker run --rm -it -v %cd%:/ apiaryio/emcc emcc main.cpp -o index.html
