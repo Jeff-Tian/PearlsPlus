@@ -18,6 +18,6 @@ const text = fs.readFileSync(file, 'utf-8')
 //     console.log('skip ', file, ' as it is already converted.')
 // }
 
-const converted = text.replace(/WebAssembly/g, 'WXWebAssembly').replace('self.location.href', '(self || this).location.href').replace(/return getBinaryPromise\(\)\.then\(.+?\}\)/s, `return WXWebAssembly.instantiate(this.wasmPath, info)`).replace('instantiateAsync();', 'instantiateArrayBuffer(receiveInstantiationResult);');
+const converted = text.replace(/WebAssembly/g, 'WXWebAssembly').replace('self.location.href', '(self || this).location.href').replace(/return getBinaryPromise\(\)\.then\(.+?\}\)/s, `return WXWebAssembly.instantiate(this.wasmPath, info)`).replace('instantiateAsync();', 'instantiateArrayBuffer(receiveInstantiationResult);').replace(`var Module = typeof Module !== 'undefined' ? Module : {};`, `var Module = typeof this.Module !== 'undefined' ? this.Module : {};`);
 
 fs.writeFileSync(convertedFile, converted);
