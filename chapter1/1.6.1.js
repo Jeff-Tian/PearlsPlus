@@ -212,7 +212,7 @@ if (ENVIRONMENT_IS_SHELL) {
 // ENVIRONMENT_IS_NODE.
 if (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) {
   if (ENVIRONMENT_IS_WORKER) { // Check worker, not web, since window could be polyfilled
-    scriptDirectory = (self || this).location.href;
+    scriptDirectory = self.location.href;
   } else if (typeof document !== 'undefined' && document.currentScript) { // web
     scriptDirectory = document.currentScript.src;
   }
@@ -425,10 +425,10 @@ function warnOnce(text) {
 function convertJsFunctionToWasm(func, sig) {
 
   // If the type reflection proposal is available, use the new
-  // "WXWebAssembly.Function" constructor.
+  // "WebAssembly.Function" constructor.
   // Otherwise, construct a minimal wasm module importing the JS function and
   // re-exporting it.
-  if (typeof WXWebAssembly.Function === "function") {
+  if (typeof WebAssembly.Function === "function") {
     var typeNames = {
       'i': 'i32',
       'j': 'i64',
@@ -442,7 +442,7 @@ function convertJsFunctionToWasm(func, sig) {
     for (var i = 1; i < sig.length; ++i) {
       type.parameters.push(typeNames[sig[i]]);
     }
-    return new WXWebAssembly.Function(type, func);
+    return new WebAssembly.Function(type, func);
   }
 
   // The module is static, with the exception of the type section, which is
@@ -495,8 +495,8 @@ function convertJsFunctionToWasm(func, sig) {
 
    // We can compile this wasm module synchronously because it is very small.
   // This accepts an import (at "e.f"), that it reroutes to an export (at "f")
-  var module = new WXWebAssembly.Module(bytes);
-  var instance = new WXWebAssembly.Instance(module, {
+  var module = new WebAssembly.Module(bytes);
+  var instance = new WebAssembly.Instance(module, {
     'e': {
       'f': func
     }
@@ -573,7 +573,7 @@ function removeFunction(index) {
 }
 
 // 'sig' parameter is required for the llvm backend but only when func is not
-// already a WXWebAssembly function.
+// already a WebAssembly function.
 function addFunction(func, sig) {
   assert(typeof func !== 'undefined');
 
@@ -627,7 +627,7 @@ if (!Object.getOwnPropertyDescriptor(Module, 'noExitRuntime')) {
   });
 }
 
-if (typeof WXWebAssembly !== 'object') {
+if (typeof WebAssembly !== 'object') {
   abort('no native wasm support detected');
 }
 
@@ -1507,7 +1507,7 @@ function abort(what) {
   // Use a wasm runtime error, because a JS error might be seen as a foreign
   // exception, which means we'd run destructors on it. We need the error to
   // simply make the program stop.
-  var e = new WXWebAssembly.RuntimeError(what);
+  var e = new WebAssembly.RuntimeError(what);
 
   // Throw the error whether or not MODULARIZE is set because abort is used
   // in code paths apart from instantiation where an exception is expected
@@ -1621,7 +1621,7 @@ function createWasm() {
   // Load the wasm module and create an instance of using native support in the JS engine.
   // handle a generated wasm instance, receiving its exports and
   // performing other necessary setup
-  /** @param {WXWebAssembly.Module=} module*/
+  /** @param {WebAssembly.Module=} module*/
   function receiveInstance(instance, module) {
     var exports = instance.exports;
 
@@ -1661,7 +1661,9 @@ function createWasm() {
   }
 
   function instantiateArrayBuffer(receiver) {
-    return WXWebAssembly.instantiate(this.wasmPath, info).then(function (instance) {
+    return getBinaryPromise().then(function(binary) {
+      return WebAssembly.instantiate(binary, info);
+    }).then(function (instance) {
       return instance;
     }).then(receiver, function(reason) {
       err('failed to asynchronously prepare wasm: ' + reason);
@@ -1676,13 +1678,13 @@ function createWasm() {
 
   function instantiateAsync() {
     if (!wasmBinary &&
-        typeof WXWebAssembly.instantiateStreaming === 'function' &&
+        typeof WebAssembly.instantiateStreaming === 'function' &&
         !isDataURI(wasmBinaryFile) &&
         // Don't use streaming for file:// delivered objects in a webview, fetch them synchronously.
         !isFileURI(wasmBinaryFile) &&
         typeof fetch === 'function') {
       return fetch(wasmBinaryFile, { credentials: 'same-origin' }).then(function (response) {
-        var result = WXWebAssembly.instantiateStreaming(response, info);
+        var result = WebAssembly.instantiateStreaming(response, info);
 
         return result.then(
           receiveInstantiationResult,
@@ -1712,7 +1714,7 @@ function createWasm() {
     }
   }
 
-  instantiateArrayBuffer(receiveInstantiationResult);
+  instantiateAsync();
   return {}; // no exports yet; we'll fill them in later
 }
 
