@@ -1,12 +1,22 @@
 const fs = require('fs');
 const path = require('path');
 
-const input = '../index.js'
+console.log('args = ', process.argv);
+console.log('working = ', __dirname);
+console.log('cwd = ', process.cwd());
 
-const text = fs.readFileSync(path.join(__dirname, input), 'utf-8')
+const input = process.argv[2] || 'index.js'
 
-const converted = text.replace(/WebAssembly/g, 'WXWebAssembly').replace('self.location.href', '(self || this).location.href').replace(/return getBinaryPromise\(\)\.then\(.+?\}\)/s, `return WXWebAssembly.instantiate('/pages/wasm/hello.wasm', info)`).replace('instantiateAsync();', 'instantiateArrayBuffer(receiveInstantiationResult);');
+const file = path.join(process.cwd(), input)
 
-const result = fs.writeFileSync('hello.js', converted);
+console.log('handling ', file)
 
-console.log('text = ', result)
+const text = fs.readFileSync(file, 'utf-8')
+
+if (text.includes('WXWebAssembly')) {
+    console.log('skip ', file, ' as it is already converted.')
+}
+
+const converted = text.replace(/WebAssembly/g, 'WXWebAssembly').replace('self.location.href', '(self || this).location.href').replace(/return getBinaryPromise\(\)\.then\(.+?\}\)/s, `return WXWebAssembly.instantiate(this.wasmPath, info)`).replace('instantiateAsync();', 'instantiateArrayBuffer(receiveInstantiationResult);');
+
+fs.writeFileSync(file, converted);
