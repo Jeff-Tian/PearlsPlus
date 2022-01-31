@@ -29,6 +29,9 @@ jobs:
           emcc main.cpp -o index.html
           emcc chapter1/1.6.1.cpp -o chapter1/1.6.1.html
 
+          node scripts/wmp.js index.js
+          node scripts/wmp.js chapter1/1.6.1.js
+
       - name: Publish generated content to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
