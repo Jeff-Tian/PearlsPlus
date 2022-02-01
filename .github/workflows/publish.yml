@@ -27,10 +27,16 @@ jobs:
           CPM_SOURCE_CACHE: ${{ github.workspace }}/cpm_modules
         run: |
           emcc main.cpp -o index.html
+          emcc main.cpp -s WASM=0 -o wmp-index.html
+
           emcc chapter1/1.6.1.cpp -o chapter1/1.6.1.html
+          emcc chapter1/1.6.1.cpp -s WASM=0 -o chapter1/wmp-1.6.1.html
 
           node scripts/wmp.js index.js
           node scripts/wmp.js chapter1/1.6.1.js
+
+          node scripts/wmp-js.js wmp-index.js
+          node scripts/wmp-js.js chapter1/wmp-1.6.1.js
 
       - name: Publish generated content to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
