@@ -1,4 +1,5 @@
-#include "stdio.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 int intcomp(int *x, int *y) {
     return *x - *y;
@@ -18,7 +19,7 @@ int main(void) {
     qsort(a, n, sizeof(int), intcomp);
 
     printf("排序后的结果是：\n\n");
-    
+
     for(i = 0; i < n; i++) {
         printf("%d\n", a[i]);
     }
