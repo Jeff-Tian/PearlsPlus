@@ -23,6 +23,13 @@ clang++-7 -o main chapter1/1.6.1.cpp
 ./main
 ```
 
+如果是 c 文件，则要用这个命令：
+
+```shell
+clang-7 -o main chapter1/1.6.1.c
+./main
+```
+
 ![在线编辑](./online-edit.png)
 
 ## 相关专栏
