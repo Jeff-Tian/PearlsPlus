@@ -31,6 +31,7 @@ jobs:
 
           emcc chapter1/1.6.1.cpp -o chapter1/1.6.1.html
           emcc chapter1/1.6.1.cpp -s WASM=0 -o chapter1/wmp-1.6.1.html
+          emcc chapter1/1.6.1.c -s WASM=0 -o chapter1/c1.6.1.html
 
           node scripts/wmp.js index.js
           node scripts/wmp.js chapter1/1.6.1.js
